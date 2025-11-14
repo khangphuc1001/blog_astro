@@ -277,6 +277,9 @@ function isHttpUrl(url) {
 function renderHead() {
   return createRenderInstruction({ type: "head" });
 }
+function maybeRenderHead() {
+  return createRenderInstruction({ type: "maybe-head" });
+}
 
 const ALGORITHMS = {
   "SHA-256": "sha256-",
@@ -524,4 +527,4 @@ function isAstroComponentInstance(obj) {
 "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_".split("").reduce((v, c) => (v[c.charCodeAt(0)] = c, v), []);
 "-0123456789_".split("").reduce((v, c) => (v[c.charCodeAt(0)] = c, v), []);
 
-export { NOOP_MIDDLEWARE_HEADER as N, createAstro as a, addAttribute as b, createComponent as c, renderTemplate as d, decodeKey as e, renderHead as r };
+export { NOOP_MIDDLEWARE_HEADER as N, createAstro as a, addAttribute as b, createComponent as c, renderHead as d, decodeKey as e, maybeRenderHead as m, renderTemplate as r };
