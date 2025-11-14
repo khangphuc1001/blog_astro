@@ -1,1 +1,1 @@
-// Contents removed by Astro as it's used for prerendering git
+// Contents removed by Astro as it's used for prerendering only
