@@ -2,22 +2,28 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/global.css";
 import BlogPost from "../components/BlogPost.astro";
-const allPosts = Object.values(
-  import.meta.glob("./posts/*.md", { eager: true }),
-);
+
 const pageTitle = "My Astro Learning Blog";
+
+const res = await fetch(
+  "https://exciting-poem-f636868266.strapiapp.com/api/articles",
+);
+const data = await res.json();
+
+console.log("STRAPI DATA:", data); // quan trọng
+const allPosts = data.data;
 ---
 
 <BaseLayout pageTitle={pageTitle}>
   <body>
-    <p>This is where I will post about my journey learning Astro.</p>
-
     <ul>
       {
         allPosts.map((post: any) => (
-          <BlogPost url={post.url} title={post.frontmatter.title} />
+          <BlogPost url={`/posts/${post.id}`} title={post.Title} />
         ))
       }
     </ul>
   </body>
 </BaseLayout>
+
+

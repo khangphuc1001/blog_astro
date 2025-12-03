@@ -1,0 +1,100 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const { id } = Astro.params;
+
+console.log(`[Post ${id}] Rendering post page for ID:`, id);
+
+let res = await fetch(
+  `https://exciting-poem-f636868266.strapiapp.com/api/articles/${id}`,
+);
+let data = await res.json();
+
+if (data.error || !data.data) {
+  console.log(`[Post ${id}] Direct fetch failed, trying filter approach`);
+  res = await fetch(
+    `https://exciting-poem-f636868266.strapiapp.com/api/articles?filters[id][$eq]=${id}`,
+  );
+  data = await res.json();
+}
+
+console.log(`[Post ${id}] API Response:`, JSON.stringify(data, null, 2));
+
+const post = data.data && Array.isArray(data.data) ? data.data[0] : data.data;
+
+console.log(`[Post ${id}] Post object:`, post);
+
+// Xử lý lỗi
+if (!post) {
+  console.log(`[Post ${id}] Post not found, redirecting to /blog`);
+  return Astro.redirect("/blog");
+}
+
+console.log(`[Post ${id}] Post loaded successfully: ${post.Title}`);
+
+const title = post.Title || "Untitled";
+const content = post.Content || [];
+const postDate = post.PostDate ? new Date(post.PostDate) : null;
+const excerpt = post.Excerpt || "";
+---
+
+<BaseLayout>
+  <article style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
+    <header
+      style="margin-bottom: 2rem; border-bottom: 2px solid #eee; padding-bottom: 1.5rem;"
+    >
+      <h1
+        style="font-size: 2.5rem; margin: 0 0 1rem 0; line-height: 1.2; color: #222;"
+      >
+        {title}
+      </h1>
+
+      {
+        excerpt && (
+          <p style="font-size: 1.1rem; color: #666; margin: 1rem 0 0 0; font-style: italic;">
+            {excerpt}
+          </p>
+        )
+      }
+
+      {
+        postDate && (
+          <p style="color: #999; font-size: 0.95rem; margin: 1rem 0 0 0;">
+            {postDate.toLocaleDateString("vi-VN", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        )
+      }
+    </header>
+
+    <div
+      style="font-size: 1.05rem; line-height: 1.8; color: #444; margin: 2rem 0;"
+    >
+      {
+        content && content.length > 0 ? (
+          content.map((block: any) => (
+            <p style="margin: 1.2rem 0;">{block.children?.[0]?.text || ""}</p>
+          ))
+        ) : (
+          <p style="color: #999; font-style: italic;">No content.</p>
+        )
+      }
+    </div>
+
+    <footer
+      style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;"
+    >
+      <p>
+        <a
+          href="/blog"
+          style="color: #0066cc; text-decoration: none; font-weight: 500;"
+        >
+          ← Go back.
+        </a>
+      </p>
+    </footer>
+  </article>
+</BaseLayout>
