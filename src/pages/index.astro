@@ -1,8 +1,126 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-const pageTitle = "Home Page";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
+const pageTitle = "Home";
+
+// Fetch latest posts from Strapi
+const res = await fetch(
+  "https://exciting-poem-f636868266.strapiapp.com/api/articles",
+);
+const data = await res.json();
+const allPosts = data.data || [];
+const latestPosts = allPosts.slice(0, 3); // Get first 3 posts
 ---
-<BaseLayout pageTitle={pageTitle}>
-  <h2>My awesome blog subtitle</h2>
+
+<BaseLayout>
+  <div
+    style="background: linear-gradient(135deg, #f5f7ff 0%, #fef3ff 50%, #fff5f0 100%); min-height: 100vh; padding: 2rem 0; margin: -2rem 0;"
+  >
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
+      <section
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4rem 2rem; border-radius: 12px; margin-bottom: 3rem; text-align: center;"
+      >
+        <h1 style="font-size: 3rem; margin: 0 0 1rem 0; line-height: 1.2;">
+          Welcome to My Blog
+        </h1>
+        <p style="font-size: 1.3rem; margin: 0 0 2rem 0; opacity: 0.9;">
+          Exploring ideas, sharing knowledge, and documenting my journey
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          <a
+            href="/blog"
+            style="background: white; color: #667eea; padding: 0.8rem 2rem; border-radius: 6px; text-decoration: none; font-weight: 600; transition: transform 0.2s;"
+          >
+            Read Latest Posts
+          </a>
+          <a
+            href="/about"
+            style="border: 2px solid white; color: white; padding: 0.8rem 2rem; border-radius: 6px; text-decoration: none; font-weight: 600; transition: transform 0.2s;"
+          >
+            Learn About Me
+          </a>
+        </div>
+      </section>
+
+      {/* Latest Posts Section */}
+      <section style="margin-bottom: 3rem;">
+        <h2 style="font-size: 2rem; margin-bottom: 2rem; color: #222;">
+          Latest Posts
+        </h2>
+
+        {
+          latestPosts.length > 0 ? (
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+              {latestPosts.map((post: any) => (
+                <article
+                  style="background: #f8f9fa; border-radius: 8px; padding: 1.5rem; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;"
+                  onclick={`window.location.href = '/posts/${post.id}'`}
+                >
+                  <h3 style="margin: 0 0 0.5rem 0; font-size: 1.3rem; color: #222;">
+                    {post.Title}
+                  </h3>
+
+                  {post.Excerpt && (
+                    <p style="color: #666; margin: 0.5rem 0 1rem 0; line-height: 1.6;">
+                      {post.Excerpt.substring(0, 100)}...
+                    </p>
+                  )}
+
+                  {post.PostDate && (
+                    <p style="color: #999; font-size: 0.9rem; margin: 0;">
+                      {new Date(post.PostDate).toLocaleDateString("vi-VN", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  )}
+
+                  <a
+                    href={`/posts/${post.id}`}
+                    style="display: inline-block; margin-top: 1rem; color: #667eea; text-decoration: none; font-weight: 600;"
+                  >
+                    Read More →
+                  </a>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p style="color: #999; text-align: center; padding: 2rem;">
+              No posts yet. Check back soon!
+            </p>
+          )
+        }
+      </section>
+
+      {/* CTA Section */}
+      <section
+        style="background: #f0f4ff; padding: 3rem 2rem; border-radius: 12px; text-align: center;"
+      >
+        <h2 style="font-size: 1.8rem; margin: 0 0 1rem 0; color: #222;">
+          Want to read more?
+        </h2>
+        <p style="color: #666; margin-bottom: 2rem;">
+          Explore all my articles and thoughts on various topics
+        </p>
+        <a
+          href="/blog"
+          style="background: #667eea; color: white; padding: 0.8rem 2.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;"
+        >
+          Browse All Posts
+        </a>
+      </section>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  article:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  a:hover {
+    opacity: 0.9;
+  }
+</style>

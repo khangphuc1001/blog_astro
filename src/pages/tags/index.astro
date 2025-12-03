@@ -1,43 +1,104 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-const pageTitle = "Tag Index";
-const allPosts = Object.values(
-  import.meta.glob("../posts/*.md", { eager: true }),
+const pageTitle = "Tags";
+
+// Fetch tags from Strapi API
+const res = await fetch(
+  "https://exciting-poem-f636868266.strapiapp.com/api/tags",
 );
-const tags = [
-  ...new Set(allPosts.map((post: any) => post.frontmatter.tags).flat()),
-];
+const data = await res.json();
+const tags = data.data || [];
+
+console.log("[Tags Index] Fetched tags:", tags);
 ---
 
 <BaseLayout pageTitle={pageTitle}>
-  <div class="tags">
-    {
-      tags.map((tag) => (
-        <p class="tag">
-          <a href={`/tags/${tag}`}>{tag}</a>
+  <div
+    style="background: linear-gradient(135deg, #f5f7ff 0%, #fef3ff 50%, #fff5f0 100%); min-height: 100vh; padding: 2rem 0; margin: -2rem 0;"
+  >
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
+      {/* Header Section */}
+      <section
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; border-radius: 12px; margin-bottom: 3rem; text-align: center;"
+      >
+        <h1 style="font-size: 2.8rem; margin: 0 0 1rem 0; line-height: 1.2;">
+          Browse Tags
+        </h1>
+        <p style="font-size: 1.1rem; margin: 0; opacity: 0.95;">
+          Explore articles organized by topics
         </p>
-      ))
-    }
+      </section>
+
+      {/* Tags Section */}
+      <section style="margin-bottom: 3rem;">
+        <h2 style="font-size: 1.8rem; margin-bottom: 2rem; color: #222;">
+          All Topics ({tags.length})
+        </h2>
+
+        {
+          tags && tags.length > 0 ? (
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+              {tags.map((tag: any) => (
+                <a
+                  href={`/tags/${tag.documentId}`}
+                  style="background: white; border-radius: 12px; padding: 2rem; text-decoration: none; transition: all 0.3s; border: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);"
+                  class="tag-card"
+                >
+                  <div style="font-size: 2rem;">🏷️</div>
+                  <h3 style="margin: 0; font-size: 1.3rem; color: #222;">
+                    {tag.NameTag}
+                  </h3>
+                  <p style="margin: 0; font-size: 0.9rem; color: #999;">
+                    Explore →
+                  </p>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div style="background: white; padding: 3rem 2rem; border-radius: 12px; text-align: center; color: #999;">
+              <p style="font-size: 1.1rem; margin: 0;">
+                No tags available yet.
+              </p>
+            </div>
+          )
+        }
+      </section>
+
+      {/* Tips Section */}
+      <section
+        style="background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);"
+      >
+        <h2 style="color: #667eea; font-size: 1.6rem; margin-top: 0;">
+          💡 Tips
+        </h2>
+        <ul
+          style="list-style: none; padding: 0; margin: 0; font-size: 1rem; line-height: 1.8; color: #555;"
+        >
+          <li>Click any tag to see related articles</li>
+          <li>Use tags to filter content by topic</li>
+        </ul>
+      </section>
+    </div>
   </div>
+
+  <style>
+    .tag-card {
+      border-color: transparent;
+    }
+
+    .tag-card:hover {
+      border-color: #667eea;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+    }
+
+    .tag-card:hover h3 {
+      color: #667eea;
+    }
+
+    .tag-card:hover p {
+      color: #764ba2;
+    }
+  </style>
 </BaseLayout>
-
-<style>
-  a {
-    color: #00539f;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .tag {
-    margin: 0.25em;
-    border: dotted 1px #a1a1a1;
-    border-radius: 0.5em;
-    padding: 0.5em 1em;
-    font-size: 1.15em;
-    background-color: #f8fcfd;
-  }
-</style>

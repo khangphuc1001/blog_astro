@@ -2,16 +2,49 @@
 import Social from "./Social.astro";
 ---
 
-<footer>
-  <Social platform="twitter" username="astrodotbuild" />
-  <Social platform="github" username="withastro" />
-  <Social platform="youtube" username="astrodotbuild" />
-</footer>
+<footer class="footer">
+  <div class="footer-divider"></div>
 
-<style>
-  footer {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-</style>
+  <div class="footer-bottom">
+    <p class="footer-credit">© All rights reserved.</p>
+    <p class="footer-tech">
+      Built with <span class="highlight">Astro</span> +
+      <span class="highlight">Strapi</span>
+    </p>
+  </div>
+
+  <style>
+    .footer-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      text-align: center;
+    }
+
+    .footer-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.3rem;
+    }
+
+    .footer-divider {
+      margin: 1.5rem auto;
+      width: 60%;
+      height: 1px;
+      background: #e0e0e0;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      color: #777;
+      line-height: 1.5;
+    }
+  </style>
+</footer>

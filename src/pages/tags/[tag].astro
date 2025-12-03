@@ -1,36 +1,175 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import BlogPost from "../../components/BlogPost.astro";
 
-export async function getStaticPaths() {
-  const allPosts = Object.values(
-    import.meta.glob("../posts/*.md", { eager: true }),
-  );
-
-  const uniqueTags = [
-    ...new Set(allPosts.map((post: any) => post.frontmatter.tags).flat()),
-  ];
-
-  return uniqueTags.map((tag) => {
-    const filteredPosts = allPosts.filter((post: any) =>
-      post.frontmatter.tags.includes(tag),
+// Fetch all tags for static path generation
+async function getAllTags() {
+  try {
+    const res = await fetch(
+      "https://exciting-poem-f636868266.strapiapp.com/api/tags",
     );
-    return {
-      params: { tag },
-      props: { posts: filteredPosts },
-    };
-  });
+    const data = await res.json();
+    return data.data || [];
+  } catch (error) {
+    console.error("[getAllTags] Error:", error);
+    return [];
+  }
+}
+
+// Generate static paths for all known tags
+export async function getStaticPaths() {
+  try {
+    const tags = await getAllTags();
+    console.log("[getStaticPaths] Generating paths for", tags.length, "tags");
+
+    return tags.map((tag: any) => ({
+      params: { tag: tag.documentId },
+    }));
+  } catch (error) {
+    console.error("[getStaticPaths] Error:", error);
+    // Return empty array - routes will be handled on-demand in server mode
+    return [];
+  }
 }
 
 const { tag } = Astro.params;
-const { posts } = Astro.props;
+
+// Fetch the tag by documentId
+const tagRes = await fetch(
+  `https://exciting-poem-f636868266.strapiapp.com/api/tags?filters[documentId][$eq]=${tag}`,
+);
+const tagData = await tagRes.json();
+const tagInfo =
+  tagData.data && tagData.data.length > 0 ? tagData.data[0] : null;
+
+if (!tagInfo) {
+  return Astro.redirect("/tags/");
+}
+
+const tagName = tagInfo.NameTag;
+const tagId = tagInfo.id;
+
+// Fetch articles with tag relationship populated
+// This requires articles to have a "tags" relationship field in Strapi
+const res = await fetch(
+  `https://exciting-poem-f636868266.strapiapp.com/api/articles?populate=tags`,
+);
+const data = await res.json();
+const allPosts = data.data || [];
+
+// Filter articles that have this tag
+const filteredPosts = allPosts.filter((post: any) => {
+  // Check if article has tags relationship
+  if (!post.tags) return false;
+
+  // Check if any of the article's tags match the current tag
+  return post.tags.some((t: any) => t.id === tagId);
+});
+
+console.log(
+  `[Tag ${tagName}] Found ${filteredPosts.length} articles out of ${allPosts.length}`,
+);
 ---
 
-<BaseLayout pageTitle={tag}>
-  <p>Posts tagged with {tag}</p>
-  {
-    posts.map((post: any) => (
-      <BlogPost url={post.url} title={post.frontmatter.title} />
-    ))
-  }
+<BaseLayout pageTitle={`Tag: ${tagName}`}>
+  <div
+    style="background: linear-gradient(135deg, #f5f7ff 0%, #fef3ff 50%, #fff5f0 100%); min-height: 100vh; padding: 2rem 0; margin: -2rem 0;"
+  >
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
+      <section
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; border-radius: 12px; margin-bottom: 3rem; text-align: center;"
+      >
+        <div
+          style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 20px; margin-bottom: 1rem;"
+        >
+          <span
+            style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;"
+          >
+            Tag
+          </span>
+        </div>
+        <h1 style="font-size: 2.5rem; margin: 0 0 1rem 0; line-height: 1.2;">
+          #{tagName}
+        </h1>
+        <p style="font-size: 1.1rem; margin: 0; opacity: 0.95;">
+          Explore articles tagged with {tagName}
+        </p>
+      </section>
+
+      <section style="margin-bottom: 3rem;">
+        <h2 style="font-size: 1.6rem; margin-bottom: 2rem; color: #222;">
+          {filteredPosts.length}
+          {filteredPosts.length === 1 ? "Article" : "Articles"}
+        </h2>
+
+        {
+          filteredPosts && filteredPosts.length > 0 ? (
+            <div style="display: grid; gap: 1.5rem;">
+              {filteredPosts.map((post: any) => (
+                <article
+                  style="background: white; border-radius: 8px; padding: 2rem; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; border-left: 4px solid #667eea;"
+                  onclick={`window.location.href = '/posts/${post.id}'`}
+                >
+                  <h3 style="margin: 0 0 0.5rem 0; font-size: 1.4rem; color: #222;">
+                    {post.Title}
+                  </h3>
+
+                  {post.Excerpt && (
+                    <p style="color: #666; margin: 0.5rem 0 1rem 0; line-height: 1.6;">
+                      {post.Excerpt.substring(0, 120)}...
+                    </p>
+                  )}
+
+                  <div style="display: flex; gap: 1rem; align-items: center; color: #999; font-size: 0.9rem;">
+                    {post.PostDate && (
+                      <span>
+                        📅{" "}
+                        {new Date(post.PostDate).toLocaleDateString("vi-VN", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    )}
+                  </div>
+
+                  <a
+                    href={`/posts/${post.id}`}
+                    style="display: inline-block; margin-top: 1rem; color: #667eea; text-decoration: none; font-weight: 600; transition: color 0.3s;"
+                  >
+                    Read Article →
+                  </a>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div style="background: white; padding: 3rem 2rem; border-radius: 8px; text-align: center; color: #999;">
+              <p style="font-size: 1.1rem; margin: 0;">
+                No articles found with this tag yet.
+              </p>
+            </div>
+          )
+        }
+      </section>
+
+      <section style="text-align: center; margin-bottom: 2rem;">
+        <a
+          href="/tags/"
+          style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 1rem; transition: color 0.3s;"
+        >
+          ← Back to All Tags
+        </a>
+      </section>
+    </div>
+  </div>
+
+  <style>
+    article:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    a:hover {
+      color: #764ba2;
+    }
+  </style>
 </BaseLayout>

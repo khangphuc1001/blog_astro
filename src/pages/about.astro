@@ -1,87 +1,157 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-
 import "../styles/global.css";
 
 const pageTitle = "About Me";
-
-const identity = {
-  firstName: "Sarah",
-  country: "Canada",
-  occupation: "Technical Writer",
-  hobbies: ["photography", "birdwatching", "baseball"],
-};
-
-const skills = ["HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
-
-const happy = true;
-const finished = false;
-const goal = 3;
-
-const skillColor = "crimson";
-const fontWeight = "bold";
-const textCase = "capitalize";
 ---
 
 <BaseLayout pageTitle={pageTitle}>
-  <body>
-    <style is:global define:vars={{ skillColor, fontWeight, textCase }}>
-      h1 {
-        color: purple;
-        font-size: 4rem;
-      }
+  <div
+    style="background: linear-gradient(135deg, #f5f7ff 0%, #fef3ff 50%, #fff5f0 100%); min-height: 100vh; padding: 2rem 0; margin: -2rem 0;"
+  >
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
+      {/* Hero Section */}
+      <section
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4rem 2rem; border-radius: 12px; margin-bottom: 3rem; text-align: center;"
+      >
+        <h1 style="font-size: 2.5rem; margin: 0 0 0.5rem 0; line-height: 1.2;">
+          Lam Phuc Khang
+        </h1>
+        <p
+          style="font-size: 1.2rem; margin: 0; opacity: 0.95; font-weight: 500;"
+        >
+          Final Year Student | Information Systems | HUFLIT
+        </p>
+      </section>
 
-      .skill {
-        color: var(--skillColor);
-        font-weight: var(--fontWeight);
-        text-transform: var(--textCase);
-      }
-    </style>
-    <h2>... and my new Astro site!</h2>
+      <section
+        style="background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);"
+      >
+        <h2 style="color: #667eea; font-size: 1.8rem; margin-top: 0;">
+          About Me
+        </h2>
+        <p
+          style="font-size: 1.05rem; line-height: 1.8; color: #444; margin: 1rem 0;"
+        >
+          Hello! Lam Phuc Khang, a final-year student at HUFLIT.
+          <strong> I major in Information Systems</strong>.
+        </p>
+        <p
+          style="font-size: 1.05rem; line-height: 1.8; color: #444; margin: 1rem 0;"
+        >
+          This blog is my space to share knowledge, document my learning
+          journey, and explore ideas in web development, software engineering,
+          and digital innovation. I believe in continuous learning and love
+          collaborating with like-minded developers and thinkers.
+        </p>
+      </section>
 
-    <p>
-      I am working through Astro's introductory tutorial. This is the second
-      page on my website, and it's the first one I built myself!
-    </p>
+      <section
+        style="background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);"
+      >
+        <h2 style="color: #667eea; font-size: 1.8rem; margin-top: 0;">
+          Skills & Technologies
+        </h2>
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1.5rem;"
+        >
+          {
+            [
+              "HTML & CSS",
+              "JavaScript",
+              "Astro",
+              "Web Development",
+              "UI/UX Design",
+              "Node.js",
+            ].map((skill) => (
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; border-radius: 8px; text-align: center; font-weight: 500;">
+                {skill}
+              </div>
+            ))
+          }
+        </div>
+      </section>
 
-    <p>
-      This site will update as I complete more of the tutorial, so keep checking
-      back and see how my journey is going!
-    </p>
+      {/* Education Section */}
+      <section
+        style="background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);"
+      >
+        <h2 style="color: #667eea; font-size: 1.8rem; margin-top: 0;">
+          Education
+        </h2>
+        <div style="border-left: 4px solid #667eea; padding-left: 1.5rem;">
+          <h3 style="margin: 0 0 0.5rem 0; color: #222;">
+            Bachelor's Degree in Information Systems
+          </h3>
+          <p style="margin: 0; color: #666; font-weight: 500;">
+            Ho Chi Minh City University of Foreign Languages and Information
+            Technology (HUFLIT)
+          </p>
+          <p style="margin: 0.5rem 0 0 0; color: #999; font-size: 0.95rem;">
+            Final Year Student
+          </p>
+        </div>
+      </section>
 
-    <p>Here are a few facts about me:</p>
-
-    <ul>
-      <li>My name is {identity.firstName}.</li>
-      <li>
-        I live in {identity.country} and I work as a {identity.occupation}.
-      </li>
-      {
-        identity.hobbies.length >= 2 && (
-          <li>
-            Two of my hobbies are: {identity.hobbies[0]} and{" "}
-            {identity.hobbies[1]}
+      <section
+        style="background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);"
+      >
+        <h2 style="color: #667eea; font-size: 1.8rem; margin-top: 0;">
+          Interests & Hobbies
+        </h2>
+        <ul
+          style="list-style: none; padding: 0; margin: 1rem 0; font-size: 1.05rem; line-height: 1.8; color: #444;"
+        >
+          <li style="margin-bottom: 0.5rem;">
+            Web Development & Full Stack Engineering
           </li>
-        )
-      }
-    </ul>
+          <li style="margin-bottom: 0.5rem;">Mobile App Development</li>
+          <li style="margin-bottom: 0.5rem;">UI/UX Design</li>
+          <li style="margin-bottom: 0.5rem;">Innovation & Problem Solving</li>
+          <li>Collaborating with Tech Communities</li>
+        </ul>
+      </section>
 
-    <p>My skills are:</p>
+      {/* CTA Section */}
+      <section
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem;"
+      >
+        <h2 style="font-size: 1.8rem; margin: 0 0 1rem 0;">Let's Connect</h2>
+        <p style="margin-bottom: 2rem; font-size: 1.05rem; opacity: 0.95;">
+          Feel free to reach out or explore my blog posts
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          <a
+            href="/blog"
+            style="background: white; color: #667eea; padding: 0.8rem 2rem; border-radius: 6px; text-decoration: none; font-weight: 600;"
+          >
+            Read My Blog
+          </a>
+          <a
+            href="mailto:your-email@example.com"
+            style="border: 2px solid white; color: white; padding: 0.8rem 2rem; border-radius: 6px; text-decoration: none; font-weight: 600;"
+          >
+            Contact Me
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
 
-    <ul>
-      {skills.map((skill) => <li class="skill">{skill}</li>)}
-    </ul>
-
-    {happy && <p>I am happy to be learning Astro!</p>}
-
-    {finished && <p>I finished this tutorial!</p>}
-
-    {
-      goal === 3 ? (
-        <p>My goal is to finish in 3 days.</p>
-      ) : (
-        <p>My goal is not 3 days.</p>
-      )
+  <style>
+    a:hover {
+      opacity: 0.9;
+      transition: opacity 0.3s;
     }
-  </body>
+
+    section {
+      transition:
+        transform 0.3s,
+        box-shadow 0.3s;
+    }
+
+    section:hover {
+      transform: translateY(-2px);
+    }
+  </style>
 </BaseLayout>
